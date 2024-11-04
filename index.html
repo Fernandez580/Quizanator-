@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="app.js">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Quizanator</title>
+<style>
+    
+    body {
+        font-family: Arial, sans-serif;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 100vh;
+        margin: 0;
+        background-color: #310b5c;
+    }
+    .container {
+        text-align: center;
+        max-width: 600px;
+        padding: 20px;
+        background: #fff;
+        border-radius: 8px;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+    }
+    .options button {
+        display: block;
+        width: 100%;
+        margin: 8px 0;
+        padding: 10px;
+        background-color: #007BFF;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        font-size: 16px;
+    }
+    .options button:hover {
+        background-color: #0056b3;
+    }
+    .timer, .score {
+        font-weight: bold;
+    }
+</style>
+</head>
+<body>
+<div class="container">
+    <h1>Quizanator</h1>
+    <p class="timer">Time Left: <span id="time">30</span> seconds</p>
+    <p class="score">Score: <span id="score">0</span></p>
+    <p id="question">Question goes here</p>
+    <div class="progress-bar">
+        <div id="time-bar" class="time-bar"></div>
+    </div>
+    
+    <div class="options">
+        <button onclick="checkAnswer(0)">Option 1</button>
+        <button onclick="checkAnswer(1)">Option 2</button>
+        <button onclick="checkAnswer(2)">Option 3</button>
+        <button onclick="checkAnswer(3)">Option 4</button>
+    </div>
+    <div id="game-over-popup" class="popup-overlay">
+        <div class="popup-content">
+            <p>Game Over! Your final score is: <span id="final-score-display">0</span></p>
+            <button onclick="resetGame()">Play Again</button>
+    
+</div>
+
+
+<script>
+    const questions = [
+        { question: "What does HTML stand for?", options: ["Hyper Text Markup Language", "Home Tool Markup Language", "Hyperlinks and Text Markup Language", "Hyper Transfer Markup Language"], answer: 0 },
+        { question: "Which language is used for web apps?", options: ["PHP", "Python", "JavaScript", "All"], answer: 3 },
+        { question: "What does CSS stand for?", options: ["Colorful Style Sheets", "Creative Style Sheets", "Cascading Style Sheets", "Computer Style Sheets"], answer: 2 },
+        { question: "Inside which HTML element do we put the JavaScript?", options: ["<js>", "<javascript>", "<script>", "<code>"], answer: 2 }
+    ];
+
+    let currentQuestion = 0;
+    let score = 0;
+    let timeLeft = 30;
+    let timer;
+
+    function startGame() {
+        score = 0;
+        timeLeft = 30;
+        currentQuestion = 0;
+        document.getElementById('score').textContent = score;
+        document.getElementById('time').textContent = timeLeft;
+        showQuestion();
+        timer = setInterval(updateTimer, 1000);
+    }
+
+    function showQuestion() {
+        const question = questions[currentQuestion];
+        document.getElementById('question').textContent = question.question;
+        const options = document.querySelectorAll('.options button');
+        options.forEach((button, index) => {
+            button.textContent = question.options[index];
+        });
+    }
+
+    function checkAnswer(selectedOption) {
+        if (selectedOption === questions[currentQuestion].answer) {
+        score++;
+        document.getElementById('score').textContent = score;
+        document.querySelector('.score').classList.add('updated');
+        setTimeout(() => document.querySelector('.score').classList.remove('updated'), 200)
+            document.getElementById('score').textContent = score;
+        }
+        currentQuestion++;
+        if (currentQuestion < questions.length) {
+            showQuestion();
+        } else {
+            endGame();
+        }
+    }
+
+    function updateTimer() {
+    timeLeft--;
+    document.getElementById('time').textContent = timeLeft;
+    document.getElementById('time-bar').style.width = (timeLeft / 30) * 100 + "%"; // Update bar width
+    if (timeLeft <= 0) {
+        endGame();
+    }
+}
+
+
+    function endGame() {
+    clearInterval(timer);
+    document.getElementById('final-score-display').textContent = score;
+    document.getElementById('game-over-popup').style.display = 'flex';
+
+    }
+
+    function resetGame() {
+        document.getElementById('game-over-popup').style.display='none';
+        clearInterval(timer);
+        startGame();
+
+    }
+
+    startGame();
+</script>
+
+</body>
+</html>
